@@ -6,7 +6,8 @@ let listaDeMonstruos = traerListaDeMonstruos();
 let monstruoNuevo = null;
 let tabla = crearTablaDesdeJSON(listaDeMonstruos);
 obtenerTiposMonstruos(listaDeMonstruos);
-document.forms[0].addEventListener("submit",(e)=>{e.preventDefault()});
+
+
 document.getElementById("btnCancelar").style.display = "none";
 document.getElementById("btnEliminar").style.display = "none";
 const loader = document.querySelector("#loader");
@@ -61,8 +62,6 @@ function actualizarLocalStorage()
 function crearFilas(data, tbody, thead) {
     data.forEach(item => {
       const row = tbody.insertRow();
-  
-      // Obtiene las celdas del <thead> para determinar el orden de las columnas
       const cells = thead.querySelectorAll("th");
   
       cells.forEach((headerCell, index) => {
@@ -77,6 +76,7 @@ function crearFilas(data, tbody, thead) {
   
     return tbody;
   }
+
   
 function cargarDatosEnFormulario(monstruoNuevoData)
   {
@@ -92,6 +92,11 @@ function cargarDatosEnFormulario(monstruoNuevoData)
         radioButton.checked=true;
       }
     });
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="habilidad"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = monstruoNuevo.habilidad.includes(checkbox.value);
+    });
+    
   }
 
 function guardarDatosDelFormulario() 
@@ -100,6 +105,8 @@ function guardarDatosDelFormulario()
     monstruoNuevo.alias=document.getElementById("txtAlias").value ;
     monstruoNuevo.miedo=document.getElementById("rangeMiedo").value;
     monstruoNuevo.tipo=document.getElementById("selectTipo").value;
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="habilidad"]:checked');
+    monstruoNuevo.habilidad = Array.from(checkboxes).map(checkbox => checkbox.value);
     const radioButtons = document.querySelectorAll('input[type="radio"][name="defensa"]');
     radioButtons.forEach(radioButton => {
       if (radioButton.checked==true) {
@@ -115,6 +122,7 @@ function actualizarValores(monstruoDeLista,monstruoNuevo)
     monstruoDeLista.tipo = monstruoNuevo.tipo;
     monstruoDeLista.defensa = monstruoNuevo.defensa;
     monstruoDeLista.id = monstruoNuevo.id;
+    monstruoDeLista.habilidad = monstruoNuevo.habilidad;
   }
 
 function actualizarDatosDelFormulario()
@@ -138,6 +146,14 @@ function actualizarDatosDelFormulario()
       } 
     }
   }
+  function mostrarAlerta(titulo, mensaje, tipo) {
+    Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: tipo,
+        confirmButtonText: 'OK'
+    });
+}
 
 function eliminarDatosDelFormulario()
   {
@@ -187,7 +203,7 @@ tabla.addEventListener('click', function(e) {
     const fila = e.target.parentElement;
     const id = parseInt(fila.getAttribute("data-id"), 10);
     const celdas = fila.getElementsByTagName('td');
-    const monstruoNuevo = new Monstruo(id, {}, "", 0, "", "");
+    const monstruoNuevo = new Monstruo(id, {}, "", 0, "", "","");
     for (let i = 0; i < celdas.length; i++) {
     const propiedad = columnas[i].textContent;
       if (propiedad) {
@@ -203,11 +219,11 @@ tabla.addEventListener('click', function(e) {
 });
 
 
-function PedirConfirmacion()
+function PedirConfirmacion($titulo,$mensaje,$tipo)
 {
   const resultado = window.confirm("¿Esta seguro que deseas continuar?");
   if (resultado) {
-    alert("Datos actualizados.");
+    mostrarAlerta($titulo,$mensaje,$tipo);
     return true;
   } else {
     return false;
@@ -229,13 +245,42 @@ function PonerLoader()
     tabla.style.display= "table";
     },2000);
 }
-document.getElementById("btnGuardar").addEventListener("click", ()=>{
-  
+function ControlarCampos() {
+    const nombre = document.getElementById("txtNombre").value.trim();
+    if (!nombre) {
+        alert("Por favor, completa el campo 'Nombre'.");
+        return false;
+    }
 
-  if(monstruoNuevo == null)
+    const alias = document.getElementById("txtAlias").value.trim();
+    if (!alias) {
+        alert("Por favor, completa el campo 'Alias'.");
+        return false;
+    }
+
+    const radios = document.querySelectorAll('input[name="defensa"]:checked');
+    if (radios.length === 0) {
+        alert("Por favor, selecciona una opción en 'Defensa'.");
+        return false;
+    }
+
+    const habilidades = document.querySelectorAll('input[name="habilidad"]:checked');
+    if (habilidades.length === 0) {
+        alert("Por favor, selecciona al menos una 'Habilidad'.");
+        return false;
+    }
+
+    return true;
+}
+
+
+document.getElementById("btnGuardar").addEventListener("click", ()=>{
+  if( ControlarCampos())
+  {
+    if(monstruoNuevo == null )
     {
       let ultimoId =-1;
-      monstruoNuevo = new Monstruo ("-","-","-","-",0,"-");
+      monstruoNuevo = new Monstruo ("-","-","-","-",0,"-","-");
       listaDeMonstruos.push(monstruoNuevo);
       for (const elemento of listaDeMonstruos) {
         if(ultimoId<elemento.id)
@@ -244,22 +289,33 @@ document.getElementById("btnGuardar").addEventListener("click", ()=>{
         }      
       }
       monstruoNuevo.id= ultimoId+1;
-    } 
-    if(PedirConfirmacion())
+    }
+    let valorDelSpan = document.getElementById("btnGuardar").querySelector("span").textContent;
+    let mensaje = "Monstruo actualizado";
+    if (valorDelSpan == "Agregar")
     {
-      PonerLoader();
-      guardarDatosDelFormulario();
-      actualizarDatosDelFormulario();
-      ReinciarFormular();
-      actualizarLocalStorage();
-
+      mensaje = "Monstruo agregado";
+    }
+    console.log(document.getElementById("btnGuardar"));
+      if(PedirConfirmacion("OK!", mensaje,"success"))
+      {
+        PonerLoader();
+        guardarDatosDelFormulario();
+        actualizarDatosDelFormulario();
+        ReinciarFormular();
+        actualizarLocalStorage();
+      } 
+    } else
+    {
+      alert('Por favor, completa todos los campos requeridos.');  
     } 
-    
   });
+
+
 document.getElementById("btnEliminar").addEventListener("click", ()=>{
     if(monstruoNuevo != null)
     {
-      if(PedirConfirmacion())
+      if(PedirConfirmacion("Atencion","Mounstruo eliminado","warning"))
       {
         PonerLoader();
         guardarDatosDelFormulario();
@@ -274,14 +330,17 @@ document.getElementById("btnEliminar").addEventListener("click", ()=>{
   {
     PonerLoader();
     MostrarBotones("none","Agregar");
-    monstruoNuevo = new Monstruo ("","","","",50,"");
+    monstruoNuevo = new Monstruo ("","","","",50,"", "");
     cargarDatosEnFormulario(monstruoNuevo);
     monstruoNuevo=null;
   }
 
   document.getElementById("btnCancelar").addEventListener("click", ()=>{
     PonerLoader();
-    ReinciarFormular();
   });
+
+document.getElementById('modificar').addEventListener('submit', function(event) {
+  event.preventDefault();
+});
 
 

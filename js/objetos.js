@@ -5,7 +5,7 @@ export function Personaje (id, nombre, tipo)
     this.tipo = tipo;
 }
 
-export function Monstruo(id, nombre, alias, defensa, miedo, tipo) 
+export function Monstruo(id, nombre, alias, defensa, miedo, tipo,habilidad) 
 {
     if (id === null || nombre === null || alias === null || defensa === null || miedo === null || tipo === null) {
         return null;
@@ -24,6 +24,7 @@ export function Monstruo(id, nombre, alias, defensa, miedo, tipo)
     } else {
         throw new Error('El valor de "miedo" debe ser un número.');
     }
+    this.habilidad=habilidad;
     Object.setPrototypeOf(Monstruo.prototype, Personaje.prototype);
     // this.tipo = tipo;
 }
@@ -39,7 +40,8 @@ export function crearMonstruoDesdeJSON(objetoJSON) {
         objetoJSON.alias,
         objetoJSON.defensa,
         objetoJSON.miedo,
-        objetoJSON.tipo
+        objetoJSON.tipo,
+        objetoJSON.habilidad
     );
 
     return monstruo;

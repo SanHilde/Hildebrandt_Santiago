@@ -72,7 +72,7 @@ label{
     display: flex;
     flex-direction: column;
 }
-p,h1,h2,th, label,header,footer{
+p,h1,h2,th, label,header,footer,legend{
     text-transform: uppercase;
 }
 h1{
@@ -268,7 +268,17 @@ a{
     font-family: "plasdrip", Helvetica, sans-serif;
 }
 
-
+fieldset
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+legend
+{
+    font-weight: bold;
+}
   
 
 
@@ -299,7 +309,9 @@ a{
     footer{
         height: 200px;
     }
-    
+    #logo{
+        display: none;
+    }
 }
 
 
