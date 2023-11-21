@@ -1,6 +1,7 @@
- import {monstruos} from "./monstruos.js";
- localStorage.setItem("listaDeMonstruos",JSON.stringify(monstruos));
+import {monstruos} from "./monstruos.js";
+localStorage.setItem("listaDeMonstruos",JSON.stringify(monstruos));
 import { Monstruo, traerListaDeMonstruos } from './objetos.js';
+// import { getObjetos, getObjeto,postObjeto,deleteObjeto,updateObjeto } from './ajax.js';
 // let listaDeMonstruos = JSON.parse(localStorage.getItem("listaDeMonstruos"));
 let listaDeMonstruos = traerListaDeMonstruos();
 let monstruoNuevo = null;
