@@ -29,10 +29,10 @@ export function InsertarFiltro(data,select)
     
     // nuevaSeccion.className="container-lg d-flex flex-column"
     nuevaSeccion.className="row d-flex justify-content-center bg-white text-dark";
-    nuevaSeccion.style="min-width: 570px; max-width: 35vw;"
+    nuevaSeccion.style="min-width: 460px; max-width: 35vw;"
  
     // aplicarEstiloBoostrap(nuevaSeccion);
-    console.log (nuevaSeccion);
+    // console.log (nuevaSeccion);
     return nuevaSeccion;
 }
 
@@ -58,8 +58,8 @@ function crearDivSelect (titulo,select)
     htitulo.textContent=titulo;
     contenedor.appendChild(htitulo);
     const opcion = document.createElement("option");
-    opcion.value = "Ningun";
-    opcion.text = "Ningun";
+    opcion.value = "todos";
+    opcion.text = "todos";
     opcion.selected = true;  
     select.insertBefore(opcion, select.firstChild);
     contenedor.appendChild(select);
@@ -78,7 +78,7 @@ function crearReduce(titulo,parametroASumar,data)
     }, 0);
     const parrafo = document.createElement("p");
     parrafo.id="promedioReduce"
-    parrafo.textContent = data.length > 0 ? sumaTotal / data.length : "No hay datos para calcular";
+    parrafo.textContent = data.length > 0 ? Math.round(sumaTotal / data.length) : "No hay datos para calcular";
     contenedor.appendChild(parrafo);
     return contenedor;
 }
@@ -96,7 +96,7 @@ function crearCheckboxes(arrayPalabras) {
     arrayPalabras.forEach(palabra => {
         // Crear el contenedor div para cada checkbox y label
         const contenedorIndividual = document.createElement("div");
-        contenedorIndividual.className="col-auto p-0";
+        contenedorIndividual.className="col-xl-3 col-xxl-auto p-0";//"col-auto p-0";col-md-4
 
         // Crear el elemento input (checkbox)
         const checkbox = document.createElement("input");

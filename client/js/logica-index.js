@@ -2,7 +2,7 @@
 // let listaDeMonstruos = JSON.parse(localStorage.getItem("listaDeMonstruos"));
 // let listaDeMonstruos = traerListaDeMonstruos();
 // import { Monstruo, crearMonstruoDesdeJSON } from './objetos.js';
-import { getObjetos} from './axios.js';
+import { getObjetos} from './fetch.js';
 const URL = "http://localhost:3001/monstruos";
 getObjetos(URL)
     .then(data => {

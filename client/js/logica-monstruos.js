@@ -1,38 +1,38 @@
 
 import { Monstruo, crearMonstruoDesdeJSON } from './objetos.js';
-import { getObjetos, getObjeto,postObjeto,deleteObjeto,updateObjeto } from './axios.js';
+import { getObjetos, getObjeto,postObjeto,updateObjeto } from './ajax.js';
+import { deleteObjeto } from './axios.js';
 import {InsertarFiltro} from './filtros.js'
 const URL = "http://localhost:3001/monstruos";
 let tabla = document.getElementById("tabla");
 let monstruoNuevo = null;
-//let select = document.createElement("select");
-//select.id = "filtroTipos";
-//tabla.appendChild(select);
 
 document.getElementById("btnCancelar").style.display = "none";
 document.getElementById("btnEliminar").style.display = "none";
 const loader = document.querySelector("#loader");
+const compararPorMiedo = (a, b) => b.miedo- a.miedo ;
 loader.classList.remove("oculto");
 
 getObjetos(URL)
     .then(data => {
           loader.classList.add("oculto");
-          // const labelTipo = document.getElementById("labelTipo");
           const mainElement = document.querySelector("main");
           const tipos = crearSelectTipo(data);
           const selectClonado = tipos.cloneNode(true);
           const seccion=InsertarFiltro(data,selectClonado);
-
-          tabla = crearTablaDesdeJSON(data);
           
           labelTipo.htmlFor = "selectTipo";  // Asociar con el id del selec
           selectClonado.name = "Tipo";
           selectClonado.id = "filtroTipos";
           mainElement.appendChild(seccion);
+
+          data.sort(compararPorMiedo);
+          tabla = crearTablaDesdeJSON(data);
           selectClonado.addEventListener("change", () => {
             PonerLoader();
             getObjetos(URL)
               .then(data => {
+                data.sort(compararPorMiedo);
                 AplicarFiltros(data);
                 SacarLoader();
               })
@@ -55,8 +55,6 @@ getObjetos(URL)
     .catch(error => {
         console.error(error);
     });
-
-
 
 function crearTablaDesdeJSON(data) {
       if (data.length === 0) {
@@ -98,10 +96,10 @@ function crearSelectTipo(data) {
     return select;
   }
 
-function actualizarLocalStorage()
-{
-  localStorage.setItem("listaDeMonstruos",JSON.stringify(listaDeMonstruos));
-}
+// function actualizarLocalStorage()
+// {
+//   localStorage.setItem("listaDeMonstruos",JSON.stringify(listaDeMonstruos));
+// }
 
 function crearFilas(data, tbody, thead) {
     data.forEach(item => {
@@ -158,36 +156,36 @@ function guardarDatosDelFormulario()
       }
     });
   }
-function actualizarValores(monstruoDeLista,monstruoNuevo)
-  {
-    monstruoDeLista.nombre = monstruoNuevo.nombre;
-    monstruoDeLista.alias = monstruoNuevo.alias;
-    monstruoDeLista.miedo = monstruoNuevo.miedo;
-    monstruoDeLista.tipo = monstruoNuevo.tipo;
-    monstruoDeLista.defensa = monstruoNuevo.defensa;
-    monstruoDeLista.id = monstruoNuevo.id;
-    monstruoDeLista.habilidad = monstruoNuevo.habilidad;
-  }
+// function actualizarValores(monstruoDeLista,monstruoNuevo)
+//   {
+//     monstruoDeLista.nombre = monstruoNuevo.nombre;
+//     monstruoDeLista.alias = monstruoNuevo.alias;
+//     monstruoDeLista.miedo = monstruoNuevo.miedo;
+//     monstruoDeLista.tipo = monstruoNuevo.tipo;
+//     monstruoDeLista.defensa = monstruoNuevo.defensa;
+//     monstruoDeLista.id = monstruoNuevo.id;
+//     monstruoDeLista.habilidad = monstruoNuevo.habilidad;
+//   }
 
-function actualizarDatosDelFormulario()
-  {
-    if(monstruoNuevo!=null)
-    { 
-      for (const indice in listaDeMonstruos) 
-      {
-        let monstruo = listaDeMonstruos[indice];
-        if (monstruo.id == monstruoNuevo.id) {
-            actualizarValores(monstruo,monstruoNuevo);
-           break;
-        }
-      }
-      if (bandera===1)
-      {
-        actualizarFilas();
-        monstruoNuevo=null;
-      } 
-    }
-  }
+// function actualizarDatosDelFormulario()
+//   {
+//     if(monstruoNuevo!=null)
+//     { 
+//       for (const indice in listaDeMonstruos) 
+//       {
+//         let monstruo = listaDeMonstruos[indice];
+//         if (monstruo.id == monstruoNuevo.id) {
+//             actualizarValores(monstruo,monstruoNuevo);
+//            break;
+//         }
+//       }
+//       if (bandera===1)
+//       {
+//         actualizarFilas();
+//         monstruoNuevo=null;
+//       } 
+//     }
+//   }
   function mostrarAlerta(titulo, mensaje, tipo) {
     Swal.fire({
         title: titulo,
@@ -195,33 +193,38 @@ function actualizarDatosDelFormulario()
         icon: tipo,
         confirmButtonText: 'OK'
     });
-    // let form=document.getElementById("modificar");
-    // let alerta=crearMensajeAlerta(mensaje, tipo);
-    // form.insertBefore(alerta, form.firstChildChild);
+    // let cartel = document.getElementById("cartelAlert");  
+    
+    // if(tipo!="danger")
+    // {
+    //   let div = document.getElementById("divEstilo");  
+    //   div.className = "alert alert-success mt-5";
+    // }
+    // cartel.style.display="block";
 }
 
-function eliminarDatosDelFormulario()
-  {
-    let bandera = 0;
-    if(monstruoNuevo!=null)
-    { 
-      for (const indice in listaDeMonstruos) 
-      {
-        let monstruo = listaDeMonstruos[indice];
-        if (monstruo.id == monstruoNuevo.id) 
-        {
-          listaDeMonstruos.splice(indice, 1);
-          bandera = 1;
-          break;
-        }
-      }
-      if (bandera===1)
-      {
-        actualizarFilas();
-        monstruoNuevo=null;
-      } 
-    }
-  }
+// function eliminarDatosDelFormulario()
+//   {
+//     let bandera = 0;
+//     if(monstruoNuevo!=null)
+//     { 
+//       for (const indice in listaDeMonstruos) 
+//       {
+//         let monstruo = listaDeMonstruos[indice];
+//         if (monstruo.id == monstruoNuevo.id) 
+//         {
+//           listaDeMonstruos.splice(indice, 1);
+//           bandera = 1;
+//           break;
+//         }
+//       }
+//       if (bandera===1)
+//       {
+//         actualizarFilas();
+//         monstruoNuevo=null;
+//       } 
+//     }
+//   }
   function filtrarPorTipo(dataOriginal) {
     let dataFiltrada;
   
@@ -270,8 +273,7 @@ function eliminarDatosDelFormulario()
       const valorNumerico = parseFloat(objeto["miedo"]);
       return acumulador + valorNumerico;
     } , 0);
-    parrafo.textContent = nuevaData.length > 0 ? sumaTotal / nuevaData.length : "No hay datos para calcular";
-    
+    parrafo.textContent = nuevaData.length > 0 ? Math.round(sumaTotal / nuevaData.length) : "No hay datos para calcular";
     tabla = crearTablaDesdeJSON(filtrarPorCheckBox(nuevaData));
   }
 
@@ -309,7 +311,18 @@ function actualizarFilas()
     // tabla.appendChild(crearFilas(listaDeMonstruos,tbody,thead));
     getObjetos(URL)
     .then(data => {
-
+          // const compararPorMiedo = (a, b) => a.miedo - b.miedo;
+          // data.sort(compararPorId);
+          // console.log(data);
+          data.sort(compararPorMiedo);
+          let parrafo = document.getElementById("promedioReduce");
+          const sumaTotal = data.reduce((acumulador, objeto) => {
+            const valorNumerico = parseFloat(objeto["miedo"]);
+            return acumulador + valorNumerico;
+          } , 0);
+          parrafo.textContent = data.length > 0 ? Math.round(sumaTotal / data.length) : "No hay datos para calcular";
+          // console.log(data);
+          // AplicarFiltros(data);
           tabla.appendChild(crearFilas(data,tbody,thead));
           ReinciarFormular();
     })
@@ -321,6 +334,8 @@ function actualizarFilas()
 
 
 tabla.addEventListener('click', function(e) {
+    const esCelda = e.target.tagName === 'TD' && e.target.closest('tbody');
+  if (esCelda) {
   PonerLoader();
   MostrarBotones("block", "Guardar");
   if (e.target.tagName === 'TD') {
@@ -336,7 +351,9 @@ tabla.addEventListener('click', function(e) {
         console.error(error);
     });
   }  
+}
 });
+
 
 
 function PedirConfirmacion()
@@ -408,7 +425,7 @@ document.getElementById("btnGuardar").addEventListener("click", () => {
           monstruoNuevo = new Monstruo("-", "-", "-", "-", 0, "-", "-");
           if (PedirConfirmacion()) {
             getObjetos(URL)
-                .then(data => {     
+                .then(data => {  
                     const ultimoId = data.reduce((maxId, objeto) => {
                         return objeto.id > maxId ? objeto.id : maxId;
                     }, 0);
@@ -419,7 +436,7 @@ document.getElementById("btnGuardar").addEventListener("click", () => {
                         guardarDatosDelFormulario();
                         postObjeto(monstruoNuevo, URL)
                             .then(() => {
-                                // mostrarAlerta("OK!", mensaje, "success");
+                                mostrarAlerta("OK!", mensaje, "success");
                                 actualizarFilas();
                                 monstruoNuevo = null;                           
                             })
@@ -437,7 +454,7 @@ document.getElementById("btnGuardar").addEventListener("click", () => {
               guardarDatosDelFormulario();
               updateObjeto(monstruoNuevo, URL)
                   .then(() => {
-                      // mostrarAlerta("OK!", mensaje, "success");
+                      mostrarAlerta("OK!", mensaje, "success");
                       actualizarFilas();
                       monstruoNuevo = null;
                   })
@@ -490,37 +507,10 @@ document.getElementById('modificar').addEventListener('submit', function(event) 
   event.preventDefault();
 });
 
+// document.getElementById("btnCierre").addEventListener("click", ()=>{
+//   let cartel = document.getElementById("cartelAlert");
+//   cartel.style.display="none";
+//   SacarLoader();
+// });
 
-// function crearMensajeAlerta(mensaje, tipo) {
-//   const divRow = document.createElement("div");
-//   divRow.classList.add("row");
-
-//   const divCol = document.createElement("div");
-//   divCol.classList.add("col-md-6");
-
-//   const divAlert = document.createElement("div");
-//   divAlert.classList.add("alert", `alert-${tipo}`, "alert-dismissible", "mt-5");
-
-//   const mensajeP = document.createElement("p");
-//   mensajeP.id = "mensaje";
-//   mensajeP.textContent = mensaje;
-
-//   const closeButton = document.createElement("button");
-//   closeButton.type = "button";
-//   closeButton.classList.add("close");
-//   closeButton.setAttribute("data-dismiss", "alert");
-
-//   const closeSpan = document.createElement("span");
-//   closeSpan.textContent = "x";
-
-//   closeButton.appendChild(closeSpan);
-
-//   divAlert.appendChild(mensajeP);
-//   divAlert.appendChild(closeButton);
-
-//   divCol.appendChild(divAlert);
-//   divRow.appendChild(divCol);
-
-//   return divRow;
-// }
 

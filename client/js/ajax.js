@@ -99,7 +99,7 @@ export function postObjeto(objeto, URL) {
             if (xhr.readyState == 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     const data = JSON.parse(xhr.responseText);
-                    console.log(data);
+                    // console.log(data);
                     resolve(data);
                 } else {
                     console.error(`ERROR ${xhr.status}: ${xhr.statusText}`);
@@ -129,7 +129,7 @@ export function deleteObjeto(id, URL) {
             if (xhr.readyState == 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     const data = JSON.parse(xhr.responseText);
-                    console.log(data);
+                    // console.log(data);
                     resolve(data);
                 } else {
                     const error = new Error(`ERROR ${xhr.status}: ${xhr.statusText}`);
@@ -146,7 +146,7 @@ export function deleteObjeto(id, URL) {
         try {
             xhr.send();
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             reject(error);
         }
     });
@@ -161,7 +161,7 @@ export function updateObjeto(objeto, URL) {
             if (xhr.readyState == 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     const data = JSON.parse(xhr.responseText);
-                    console.log(data);
+                    // console.log(data);
                     resolve(data);
                 } else {
                     const error = new Error(`ERROR ${xhr.status}: ${xhr.statusText}`);
